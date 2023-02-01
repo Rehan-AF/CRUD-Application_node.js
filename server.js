@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-// eslint-disable-next-line import/extensions
 import app from './app.js';
 
 dotenv.config({ path: './config.env' });

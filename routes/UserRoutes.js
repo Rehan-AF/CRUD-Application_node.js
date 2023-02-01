@@ -1,10 +1,13 @@
 import { Router } from 'express';
-// eslint-disable-next-line import/extensions
-import { getAllUser, getUser } from '../controllers/userController.js';
+import {
+  createUser,
+  getAllUser,
+  getUser,
+} from '../controllers/userController.js';
 
 const router = Router();
 
 router.get('/', getAllUser);
 router.get('/:id', getUser);
-
+router.post('/', createUser);
 export default router;
