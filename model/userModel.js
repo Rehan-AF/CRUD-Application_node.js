@@ -13,6 +13,10 @@ const UserModel = new mongoose.Schema({
     type: String,
     require: [true, 'user must have a number'],
   },
+  image: {
+    data: Buffer,
+    contentType: String,
+  },
 });
 const USER = mongoose.model('user', UserModel);
 
