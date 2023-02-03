@@ -1,10 +1,16 @@
 import catchAsync from '../utils/catchAsync.js';
 import USER from '../model/userModel.js';
 import multer from 'multer';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const diskStorage = multer.diskStorage({
   destination: (req, res, cb) => {
-    cb(null, 'uploads');
+    cb(null, `uploads`);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
@@ -63,9 +69,19 @@ export const createUser = catchAsync(async (req, res) => {
     name: name,
     email: email,
     number: number,
-    image: req.file.filename,
+    image: {
+      data: fs.readFileSync('uploads/' + req.file.filename),
+      contentType: 'image/png',
+    },
   });
-  await newUser.save();
+  await newUser
+    .save()
+    .then(() => {
+      console.log('image updated successfully');
+    })
+    .catch((err) => {
+      console.log(err, 'image updated failed');
+    });
   res.status(201).json({
     status: 'success',
     data: { newUser },

@@ -19,4 +19,6 @@ mongoose
     console.log('connetion to database successfull');
   });
 mongoose.set('strictQuery', false);
-app.listen();
+app.listen(8000, () => {
+  console.log(`listening on 8000`);
+});
