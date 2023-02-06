@@ -28,7 +28,6 @@ export const getAllUser = catchAsync(async (req, res) => {
   });
 });
 export const getUser = catchAsync(async (req, res) => {
-  console.log(req.params.id);
   const user = await USER.findById(req.params.id);
   if (!user) {
     res.status(404).json({
@@ -42,15 +41,19 @@ export const getUser = catchAsync(async (req, res) => {
   });
 });
 export const updateUser = catchAsync(async (req, res) => {
-  const { name, email, number, image } = req.body;
-  const { id } = req.params;
-  console.log(id);
-  const updateUser = await USER.findByIdAndUpdate(id, {
+  const { name, email, number, _id, image } = req.body;
+
+  const updateUser = await USER.findByIdAndUpdate(_id, {
+    _id: _id,
     name: name,
     email: email,
     number: number,
-    image: image,
+    image: {
+      data: fs.readFileSync('uploads/' + req.file.filename),
+      contentType: 'image/png',
+    },
   });
+
   await updateUser.save();
   if (!updateUser) {
     return res.status(404).json({
@@ -89,7 +92,7 @@ export const createUser = catchAsync(async (req, res) => {
 });
 
 export const deleteUser = catchAsync(async (req, res) => {
-  const deleteUser = await USER.deleteById(req.params.id);
+  const deleteUser = await USER.findByIdAndRemove(req.params.id);
   if (!deleteUser) {
     return res.status(404).json({
       status: 'failed',

@@ -5,8 +5,8 @@ import {
   getUser,
   updateUser,
   upload,
+  deleteUser,
 } from '../controllers/userController.js';
-import USER from '../model/userModel.js';
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.get('/', getAllUser);
 router.get('/:id', getUser);
 router.post('/', upload.single('image'), createUser);
 router.put('/:id', upload.single('image'), updateUser);
-
+router.delete('/:id', deleteUser);
 // router.post('/upload', upload.single('image'), async (req, res) => {
 //   try {
 //     const imagePath = req.file.filename;
