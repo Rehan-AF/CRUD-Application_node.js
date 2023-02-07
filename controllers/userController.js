@@ -40,32 +40,7 @@ export const getUser = catchAsync(async (req, res) => {
     data: { user },
   });
 });
-export const updateUser = catchAsync(async (req, res) => {
-  const { name, email, number, _id, image } = req.body;
 
-  const updateUser = await USER.findByIdAndUpdate(_id, {
-    _id: _id,
-    name: name,
-    email: email,
-    number: number,
-    image: {
-      data: fs.readFileSync('uploads/' + req.file.filename),
-      contentType: 'image/png',
-    },
-  });
-
-  await updateUser.save();
-  if (!updateUser) {
-    return res.status(404).json({
-      status: 'user not found',
-      message: 'cannot find user by this id',
-    });
-  } else {
-    return res.status(201).json({
-      message: 'upated successfully',
-    });
-  }
-});
 export const createUser = catchAsync(async (req, res) => {
   const { name, email, number } = req.body;
   const newUser = new USER({
@@ -90,7 +65,58 @@ export const createUser = catchAsync(async (req, res) => {
     data: { newUser },
   });
 });
+export const updateUser = async (req, res) => {
+  try {
+    const { name, email, number, _id } = req.body;
 
+    if (req?.file?.filename) {
+      const updateUser = await USER.findByIdAndUpdate(_id, {
+        _id: _id,
+        name: name,
+        email: email,
+        number: number,
+        image: {
+          data: fs.readFileSync('uploads/' + req.file.originalname),
+          contentType: 'image/png',
+        },
+      });
+      await updateUser.save();
+      if (!updateUser) {
+        return res.status(404).json({
+          status: 'user not found',
+          message: 'cannot find user by this id',
+        });
+      } else {
+        return res.status(201).json({
+          message: 'upated successfully',
+        });
+      }
+    } else {
+      const updateUser = await USER.findByIdAndUpdate(_id, {
+        _id: _id,
+        name: name,
+        email: email,
+        number: number,
+      });
+      await updateUser.save();
+      if (!updateUser) {
+        return res.status(404).json({
+          status: 'user not found',
+          message: 'cannot find user by this id',
+        });
+      } else {
+        return res.status(201).json({
+          message: 'upated successfully',
+        });
+      }
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: 'failed',
+      message: err.message,
+    });
+  }
+};
 export const deleteUser = catchAsync(async (req, res) => {
   const deleteUser = await USER.findByIdAndRemove(req.params.id);
   if (!deleteUser) {
